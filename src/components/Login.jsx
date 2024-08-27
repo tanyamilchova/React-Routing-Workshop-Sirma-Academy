@@ -1,4 +1,8 @@
 import * as React from 'react';
+import { useAuthContext } from '../contexts/AuthContext';
+//import { AuthContext } from '../contexts/AuthContext';
+import {useNavigate}from 'react-router-dom';
+
 import Avatar from '@mui/material/Avatar';
 import { Button } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,30 +16,41 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
-// TODO remove, this demo shouldn't need to reset the theme.
 
 
 export default function Login() {
-  const handleSubmit = (event) => {
+   // const {login}=React.useContext(AuthContext);
+   const {login}=useAuthContext();
+   const navigate=useNavigate();
+   const [error, setError]=React.useState(' ');
+
+  const handleSubmit = async(event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
-      email: data.get('email'),
+      username: data.get('username'),
       password: data.get('password'),
     });
+
+    //TODO: send login request
+    const response=await fetch('https://dummyjson.com/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            username: data.get('username'),
+            password: data.get('password'),
+        })
+      });
+      const result=await response.json();
+      if(response.ok){
+        login(result);
+        return navigate('/');
+    }
+    
+      setError(result.message);
+    console.log('Can not login');
+    
+      
   };
 
   return (
@@ -58,13 +73,15 @@ export default function Login() {
           </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
+              error={!! error}
+              helperText={error}
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
+              id="username"
+              label="Username "
+              name="username"
+              autoComplete="username"
               autoFocus
             />
             <TextField
@@ -108,3 +125,15 @@ export default function Login() {
     
   );
 }
+function Copyright(props) {
+    return (
+      <Typography variant="body2" color="text.secondary" align="center" {...props}>
+        {'Copyright © '}
+        <Link color="inherit" href="https://mui.com/">
+          Your Website
+        </Link>{' '}
+        {new Date().getFullYear()}
+        {'.'}
+      </Typography>
+    );
+  }

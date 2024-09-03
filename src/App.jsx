@@ -8,6 +8,8 @@ import Login from "./components/Login"
 import Register from "./components/Register"
 import { AuthContext, AuthContextProvider } from "./contexts/AuthContext"
 import TodoList from "./components/ToDoList"
+import CreateTodo from "./components/CreateTodo"
+
 
 
 
@@ -25,6 +27,7 @@ function App() {
         <Route path='/todos' element={<TodoList/>} />
         <Route path='/login' element={<Login/>} />
         <Route path='/register' element={<Register/>} />
+        <Route path='/todos/add' element={<CreateTodo/>} />
     </Routes>
     </AuthContextProvider>
   )
